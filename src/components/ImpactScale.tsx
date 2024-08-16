@@ -1,40 +1,40 @@
 // @ts-nocheck
-import React, { useCallback } from 'react';
-import { scaleLinear, scaleQuantize } from 'd3-scale';
-import { useTranslation } from 'react-i18next';
+import React, { useCallback } from "react";
+import { scaleLinear, scaleQuantize } from "d3-scale";
+import { useTranslation } from "react-i18next";
 
-import { ClipPath, G, Polygon, Rect, Svg, Text } from '../elements';
-import { withErrorBoundary } from '../hoc';
-import { useToken } from '../hooks';
-import { clamp, isNumber } from '../utils';
+import { ClipPath, G, Polygon, Rect, Svg, Text } from "../elements";
+import { withErrorBoundary } from "../hoc";
+import { useToken } from "../hooks";
+import { clamp, isNumber } from "../utils";
 
-type SectionName = 'success' | 'caution' | 'warning';
+type SectionName = "success" | "caution" | "warning";
 
-export type ImpactScaleProps = {
+export type Props = {
   value?: number;
   range: [number, number];
   testID?: string;
   width: number;
 };
 
-const ImpactScale = (props: ImpactScaleProps) => {
+const ImpactScale = (props: Props) => {
   const { value, range, testID, width } = props;
   const token = useToken();
   const { t } = useTranslation();
 
   const scaleBucket = scaleQuantize<SectionName>()
     .domain(range)
-    .range(['success', 'caution', 'warning']);
+    .range(["success", "caution", "warning"]);
 
   const bucket = scaleBucket(value ?? 0);
 
   const sectionColor = useCallback(
     (section: SectionName) => {
-      const tokenName = section === 'success' ? 'positive' : section;
+      const tokenName = section === "success" ? "positive" : section;
 
       return token(
         `adc.colors.support.${tokenName}.${
-          bucket === section && isNumber(value) ? 'default' : 'surface'
+          bucket === section && isNumber(value) ? "default" : "surface"
         }`
       );
     },
@@ -79,34 +79,34 @@ const ImpactScale = (props: ImpactScaleProps) => {
 
   return (
     <Svg height={height} width={width} testID={testID}>
-      <ClipPath id={'clip-impact'}>
+      <ClipPath id={"clip-impact"}>
         <Rect x={0} y={scaleY} rx={r} height={scaleHeight} width={scaleWidth} />
       </ClipPath>
       <Rect
         x={0}
         y={scaleY}
-        fill={sectionColor('success')}
+        fill={sectionColor("success")}
         height={scaleHeight}
         width={sectionWidth}
-        clipPath={'url(#clip-impact)'}
+        clipPath={"url(#clip-impact)"}
         testID={`${testID}-left`}
       />
       <Rect
         x={sectionWidth + 1}
         y={scaleY}
-        fill={sectionColor('caution')}
+        fill={sectionColor("caution")}
         height={scaleHeight}
         width={sectionWidth}
-        clipPath={'url(#clip-impact)'}
+        clipPath={"url(#clip-impact)"}
         testID={`${testID}-middle`}
       />
       <Rect
         x={2 * (sectionWidth + 1)}
         y={scaleY}
-        fill={sectionColor('warning')}
+        fill={sectionColor("warning")}
         height={scaleHeight}
         width={sectionWidth}
-        clipPath={'url(#clip-impact)'}
+        clipPath={"url(#clip-impact)"}
         testID={`${testID}-right`}
       />
 
@@ -117,8 +117,8 @@ const ImpactScale = (props: ImpactScaleProps) => {
             y={labelY + labelHeight + caretVerticalPadding}
           >
             <Polygon
-              stroke={token('adc.colors.neutral.90')}
-              fill={token('adc.colors.neutral.90')}
+              stroke={token("adc.colors.neutral.90")}
+              fill={token("adc.colors.neutral.90")}
               stroke-linejoin="round"
               points="0,0 16,0 8,8"
               testID={`${testID}-arrow`}
@@ -129,7 +129,7 @@ const ImpactScale = (props: ImpactScaleProps) => {
               width={labelWidth}
               height={labelHeight}
               rx={r}
-              fill={sectionColor(bucket || 'success')}
+              fill={sectionColor(bucket || "success")}
               testID={`${testID}-label-background`}
             />
             <Text
@@ -138,9 +138,9 @@ const ImpactScale = (props: ImpactScaleProps) => {
               textAnchor="middle"
               alignmentBaseline="central"
               fontWeight={
-                token('adc.fonts.typography.bodySmall.strong').fontWeight
+                token("adc.fonts.typography.bodySmall.strong").fontWeight
               }
-              fontSize={token('adc.fonts.typography.bodySmall.strong').fontSize}
+              fontSize={token("adc.fonts.typography.bodySmall.strong").fontSize}
               testID={`${testID}-text`}
             >
               {t(`impactScale.${bucket}`)}
