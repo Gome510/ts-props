@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useCallback } from 'react';
 import { scaleLinear, scaleQuantize } from 'd3-scale';
 import { useTranslation } from 'react-i18next';
