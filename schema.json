@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/ImpactScaleProps",
+  "definitions": {
+    "ImpactScaleProps": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "number"
+        },
+        "range": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "testID": {
+          "type": "string"
+        },
+        "width": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "range",
+        "width"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

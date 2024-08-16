@@ -1,0 +1,1 @@
+{"version":3,"file":"args.js","sourceRoot":"","sources":["../../src/generators/args.ts"],"names":[],"mappings":"AAAA,MAAM,YAAY,GAAG;IACnB,MAAM,EAAE,aAAa;IACrB,MAAM,EAAE,CAAC;IACT,OAAO,EAAE,IAAI;CACd,CAAC;AAEF,MAAM,UAAU,IAAI,CAAC,KAAa;IAChC,MAAM,IAAI,GAAG,EAAE,CAAC;IAEhB,OAAO,IAAI,CAAC;AACd,CAAC"}
