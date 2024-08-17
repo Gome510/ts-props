@@ -1,0 +1,4 @@
+value: 0
+range: []
+testID: 'Sample Text'
+width: 0

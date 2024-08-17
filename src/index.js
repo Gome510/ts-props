@@ -1,7 +1,8 @@
+//@ts-ignore
 import { createGenerator } from "ts-json-schema-generator";
 import { writeFileSync } from "fs";
 import path from "path";
-import { Args } from "./generators/args.js";
+import { args } from "./generators/args.js";
 
 const repoRoot = process.cwd();
 const config = {
@@ -11,7 +12,7 @@ const config = {
 };
 const schema = createGenerator(config).createSchema(config.type);
 const schemaString = JSON.stringify(schema);
-Args(schema.definitions || {});
+args(schema.definitions?.Props);
 
 writeFileSync("schema.json", schemaString);
 //console.log(schema);

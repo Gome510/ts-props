@@ -1,10 +1,6 @@
-type Props = {
-  name: string;
-  args: string;
-  argTypes: string;
-}
 
-function Default({name, args, argTypes}:Props){
+
+function Default({name, args, argTypes}){
   return (
     `
       export default {
