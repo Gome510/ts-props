@@ -1,4 +1,29 @@
-value: 0
-range: []
-testID: 'Sample Text'
-width: 0
+
+export default {
+  title: 'ImpactScale',
+  component: ImpactScaleComponent,
+  argTypes: {
+    value: {
+      control: {
+        type: 'range',
+        min: 0,
+        max: 100,
+      }
+    },
+    width: {
+      control: {
+        type: 'range',
+        min: 0,
+        max: 100,
+      }
+    }
+  },
+  args: {
+    value: 0,
+range: [],
+testID: 'Sample Text',
+width: 0,
+
+  },
+};
+    
