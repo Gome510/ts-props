@@ -39,7 +39,7 @@ ${args}
 }
 
 export function argTypes(types){
-  const props = types.properties
+  const props = types.properties || {}
   let controlsArray = []
   
   Object.keys(props).forEach((key)=>{
@@ -53,7 +53,7 @@ export function argTypes(types){
 }
 
 export function args(types) {
-  const props = types.properties
+  const props = types.properties|| {}
   //const required = types.required
   let argsArray = [];
 

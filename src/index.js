@@ -3,6 +3,7 @@ import { writeFileSync, readdirSync, statSync } from "fs";
 import path from "path";
 
 import { args, argTypes, defaultExport, importStatements, returnComponent } from "./generators/index.js";
+import { isComponent } from "./utils/index.js";
 
 
 
@@ -29,13 +30,14 @@ import { args, argTypes, defaultExport, importStatements, returnComponent } from
 
       if(fileStat.isDirectory()){
         listFiles(filePath)
-      }else if(filePath.includes(".tsx") && !filePath.includes("index")){
+      }else if(isComponent(filePath)){
+        //console.log(filePath)
         let storybookText = ''
 
         const fileName = file.split(".")[0];
         const storybookFilePath = path.join(storiesDir,`${fileName}.stories.tsx`)
         const relativePath = path.relative(storiesDir, filePath)
-        const types = schema.definitions?.Props || {};
+        const types = schema.definitions?.Props;
         
         storybookText += importStatements(relativePath, fileName)
         storybookText += defaultExport(fileName, args(types), argTypes(types))
@@ -47,7 +49,11 @@ import { args, argTypes, defaultExport, importStatements, returnComponent } from
     return;
   }
 
-  listFiles(componentsDir)
+  try {
+    listFiles(componentsDir)
+  } catch (error) {
+    console.error(error)
+  }
 
 /* }else{
   console.log(
