@@ -39,7 +39,7 @@ import { isComponent } from "./utils/index.js";
         const relativePath = path.relative(storiesDir, filePath)
         const types = schema.definitions?.Props;
         
-        storybookText += importStatements(relativePath, fileName)
+        storybookText += importStatements(relativePath, fileName).replace(/\\/g, '/')
         storybookText += defaultExport(fileName, args(types), argTypes(types))
         storybookText += returnComponent(fileName)
 
