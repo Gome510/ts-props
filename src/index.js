@@ -10,17 +10,18 @@ import { args, argTypes, defaultExport, importStatements, returnComponent } from
   const componentsDir = path.join(cwd,"components")
   const storiesDir = path.join(cwd,"stories")
 
-  const config = {
-    path: path.join(componentsDir, "*"),
-    tsconfig: path.join(cwd, "tsconfig.json"),
-    type: "*",
-    expose: "all",
-    skipTypeCheck: true,
-  };
-  const schema = createGenerator(config).createSchema(config.type);
+  
 
   function listFiles(directoryPath){
     const files = readdirSync(directoryPath)
+    const config = {
+      path: path.join(directoryPath, "*"),
+      tsconfig: path.join(cwd, "tsconfig.json"),
+      type: "*",
+      expose: "all",
+      skipTypeCheck: true,
+    };
+    const schema = createGenerator(config).createSchema(config.type);
 
     files.forEach(file => {
       const filePath = path.join(directoryPath, file);
@@ -34,7 +35,7 @@ import { args, argTypes, defaultExport, importStatements, returnComponent } from
         const fileName = file.split(".")[0];
         const storybookFilePath = path.join(storiesDir,`${fileName}.stories.tsx`)
         const relativePath = path.relative(storiesDir, filePath)
-        const types = schema.definitions?.Props;
+        const types = schema.definitions?.Props || {};
         
         storybookText += importStatements(relativePath, fileName)
         storybookText += defaultExport(fileName, args(types), argTypes(types))
