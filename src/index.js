@@ -14,16 +14,10 @@ import { isComponent } from "./utils/index.js";
   
 
   function listFiles(directoryPath){
+    console.log(directoryPath)
     const files = readdirSync(directoryPath)
-    const config = {
-      path: path.join(directoryPath, "*"),
-      tsconfig: path.join(cwd, "tsconfig.json"),
-      type: "*",
-      expose: "all",
-      skipTypeCheck: true,
-    };
-    const schema = createGenerator(config).createSchema(config.type);
-
+    
+    
     files.forEach(file => {
       const filePath = path.join(directoryPath, file);
       const fileStat = statSync(filePath);
@@ -31,19 +25,34 @@ import { isComponent } from "./utils/index.js";
       if(fileStat.isDirectory()){
         listFiles(filePath)
       }else if(isComponent(filePath)){
-        //console.log(filePath)
-        let storybookText = ''
+        const config = {
+          path: filePath,
+          tsconfig: path.join(cwd, "tsconfig.json"),
+          type: "Props",
+          expose: "all",
+          skipTypeCheck: true,
+        };
+        console.log(filePath)
+        
+        let schema = {}
+        try {
+           schema = createGenerator(config).createSchema(config.type) || {definitions: { Props: {}}}
+        } catch (error) {
+           schema = {definitions: { Props: {}}}
+        }
 
         const fileName = file.split(".")[0];
         const storybookFilePath = path.join(storiesDir,`${fileName}.stories.tsx`)
         const relativePath = path.relative(storiesDir, filePath)
+        
         const types = schema.definitions?.Props;
         
+        let storybookText = ''
         storybookText += importStatements(relativePath, fileName).replace(/\\/g, '/')
         storybookText += defaultExport(fileName, args(types), argTypes(types))
         storybookText += returnComponent(fileName)
 
-        writeFileSync(storybookFilePath, storybookText)
+        //writeFileSync(storybookFilePath, storybookText)
       }
     });
     return;
