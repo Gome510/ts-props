@@ -1,70 +1,81 @@
 import { createGenerator } from "ts-json-schema-generator";
 import { writeFileSync, readdirSync, statSync } from "fs";
 import path from "path";
-
-import { args, argTypes, defaultExport, importStatements, returnComponent } from "./generators/index.js";
+import {
+  defaultExport,
+  importStatements,
+  returnComponent,
+} from "./generators/index.js";
 import { isComponent } from "./utils/index.js";
 
+const cwd = process.cwd();
+const componentsDir = path.join(cwd, "components");
+const storiesDir = path.join(cwd, "stories");
 
+//Recursively find all component files and generate storybook files
+function listFiles(directoryPath) {
+  console.log(directoryPath);
+  const files = readdirSync(directoryPath);
 
-  const cwd = process.cwd();
-  const componentsDir = path.join(cwd,"components")
-  const storiesDir = path.join(cwd,"stories")
+  files.forEach((file) => {
+    const filePath = path.join(directoryPath, file);
+    const fileStat = statSync(filePath);
 
-  
+    if (fileStat.isDirectory()) {
+      listFiles(filePath);
+    } else if (isComponent(filePath)) {
+      console.log(filePath);
 
-  function listFiles(directoryPath){
-    console.log(directoryPath)
-    const files = readdirSync(directoryPath)
-    
-    
-    files.forEach(file => {
-      const filePath = path.join(directoryPath, file);
-      const fileStat = statSync(filePath);
+      //Get component types
+      const config = {
+        path: filePath,
+        tsconfig: path.join(cwd, "tsconfig.json"),
+        type: "Props",
+        expose: "all",
+        skipTypeCheck: true,
+      };
 
-      if(fileStat.isDirectory()){
-        listFiles(filePath)
-      }else if(isComponent(filePath)){
-        const config = {
-          path: filePath,
-          tsconfig: path.join(cwd, "tsconfig.json"),
-          type: "Props",
-          expose: "all",
-          skipTypeCheck: true,
+      let schema = {};
+      try {
+        schema = createGenerator(config).createSchema(config.type) || {
+          definitions: { Props: {} },
         };
-        console.log(filePath)
-        
-        let schema = {}
-        try {
-           schema = createGenerator(config).createSchema(config.type) || {definitions: { Props: {}}}
-        } catch (error) {
-           schema = {definitions: { Props: {}}}
-        }
-
-        const fileName = file.split(".")[0];
-        const storybookFilePath = path.join(storiesDir,`${fileName}.stories.tsx`)
-        const relativePath = path.relative(storiesDir, filePath)
-        
-        const types = schema.definitions?.Props;
-        
-        let storybookText = ''
-        storybookText += importStatements(relativePath, fileName).replace(/\\/g, '/')
-        storybookText += defaultExport(fileName, args(types), argTypes(types))
-        storybookText += returnComponent(fileName)
-
-        //writeFileSync(storybookFilePath, storybookText)
+      } catch (error) {
+        schema = { definitions: { Props: {} } };
       }
-    });
-    return;
-  }
+      const types = schema.definitions?.Props;
 
-  try {
-    listFiles(componentsDir)
-  } catch (error) {
-    console.error(error)
-  }
+      //File paths
+      const fileName = file.split(".")[0];
+      const storybookFilePath = path.join(
+        storiesDir,
+        `${fileName}.stories.tsx`
+      );
+      const relativePath = path.relative(storiesDir, filePath);
 
-/* }else{
+      //Write storybook file
+      let storybookText = "";
+      storybookText += importStatements(relativePath, fileName).replace(
+        /\\/g,
+        "/"
+      );
+      storybookText += defaultExport(fileName, types);
+      storybookText += returnComponent(fileName);
+
+      //writeFileSync(storybookFilePath, storybookText)
+    }
+  });
+  return;
+}
+
+try {
+  listFiles(componentsDir);
+} catch (error) {
+  console.error(error);
+}
+
+/*TODO: USAGE ERROR
+}else{
   console.log(
     `Usage Error: missing required arguments. 
 Expected Usage: npm run generateStories --components <components-dir-path> --stories <stories-dir-path>
